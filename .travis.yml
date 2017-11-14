@@ -1,0 +1,4 @@
+language: csharp
+solution: TorrentClient.sln
+script:
+  - xbuild /p:Configuration=Release TorrentClient.sln
