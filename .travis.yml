@@ -5,5 +5,9 @@ matrix:
     - dotnet: 2.0.0
       mono: none
       dist: trusty
+      script:
+        - dotnet build
     - mono: latest
+      script:
+        - xbuild /p:Configuration=Release TorrentClient.sln
   
