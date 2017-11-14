@@ -5,6 +5,5 @@ matrix:
     - dotnet: 2.0.0
       mono: none
       dist: trusty
-      env: DOTNETCORE=2  # optional, can be used to take different code paths in your script
     - mono: latest
   
