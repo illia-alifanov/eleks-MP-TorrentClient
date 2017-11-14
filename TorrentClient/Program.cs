@@ -10,6 +10,8 @@ namespace TorrentClient
     {
         static void Main(string[] args)
         {
+            Console.Write("Hello, Trrent!");
+            Console.ReadLine();
         }
     }
 }
