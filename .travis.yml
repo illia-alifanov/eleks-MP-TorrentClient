@@ -1,5 +1,10 @@
 language: csharp
 solution: TorrentClient.sln
-script:
-  - xbuild /p:Configuration=Release TorrentClient.sln
+matrix:
+  include:
+    - dotnet: 2.0.2
+      mono: none
+      dist: trusty
+      env: DOTNETCORE=2  # optional, can be used to take different code paths in your script
+    - mono: latest
   
