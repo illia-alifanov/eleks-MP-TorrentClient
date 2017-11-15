@@ -11,11 +11,17 @@
 # Build results
 
 [Dd]ebug/
+[Ss]taging/
+[Dd]ebugPublic/
 [Rr]elease/
-x64/
-build/
+[Rr]eleases/
+[Xx]64/
+[Xx]86/
+[Bb]uild/
+bld/
 [Bb]in/
 [Oo]bj/
+
 
 # NuGet Packages
 *.nupkg
@@ -57,6 +63,12 @@ build/
 # OS generated files #
 .DS_Store*
 Icon?
+
+# Visual Studio cache files
+# files ending in .cache can be ignored
+*.[Cc]ache
+# but keep track of directories ending in .cache
+!*.[Cc]ache/
 
 # Visual C++ cache files
 ipch/
