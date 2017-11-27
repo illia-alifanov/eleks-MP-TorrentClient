@@ -5,7 +5,10 @@ VisualStudioVersion = 15.0.27004.2009
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TorrentClient", "TorrentClient\TorrentClient.csproj", "{BD9DFD4E-64D2-4991-868C-BB9397F396BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{4733DA25-B000-4E57-B4DC-AA6DFFD27602}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B63B09D2-D026-44BF-ADD1-ADAFD98B29C5}"
+	ProjectSection(SolutionItems) = preProject
+		.travis.yml = .travis.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +20,6 @@ Global
 		{BD9DFD4E-64D2-4991-868C-BB9397F396BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD9DFD4E-64D2-4991-868C-BB9397F396BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD9DFD4E-64D2-4991-868C-BB9397F396BC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4733DA25-B000-4E57-B4DC-AA6DFFD27602}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4733DA25-B000-4E57-B4DC-AA6DFFD27602}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4733DA25-B000-4E57-B4DC-AA6DFFD27602}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4733DA25-B000-4E57-B4DC-AA6DFFD27602}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
