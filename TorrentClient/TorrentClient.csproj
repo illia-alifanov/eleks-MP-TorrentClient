@@ -52,6 +52,7 @@
       <HintPath>..\packages\BencodeNET.2.2.22\lib\net45\BencodeNET.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -61,7 +62,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration.cs" />
+    <Compile Include="ConvertHelper.cs" />
+    <Compile Include="DHT\DHT.cs" />
+    <Compile Include="DHT\DHTEngine.cs" />
+    <Compile Include="DHT\NodesCollection.cs" />
     <Compile Include="DHT\DHTTest.cs" />
+    <Compile Include="DHT\Node.cs" />
+    <Compile Include="DHT\SortedKeyedCollection.cs" />
+    <Compile Include="DHT\Torrent.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

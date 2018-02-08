@@ -9,12 +9,16 @@ namespace TorrentClient
     {
         static void Main(string[] args)
         {
-            DHTTest dht = new DHTTest();
-            string nodeId = dht.Ping();
-
-            if (!string.IsNullOrEmpty(nodeId))
+            var torrent = new Torrent()
             {
-                dht.GetPeers();
+                Info_Hash = "04d116664ff21b8336a9988f5f00c164046b4f95"
+            };
+            var dhtEngine = new DHTEngine();
+            dhtEngine.FindPeers(torrent);
+
+            foreach (var i in torrent.Nodes)
+            {
+                Console.WriteLine(string.Format("Node id:{0} ", i.ID));
             }
         }
     }

@@ -1,16 +1,14 @@
-﻿using System;
-using System.Text;
-
+﻿
+using BencodeNET.Objects;
+using BencodeNET.Parsing;
+using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading.Tasks;
-using BencodeNET.Objects;
-using System.Collections.Generic;
-using BencodeNET.Parsing;
+using System.Text;
 
 namespace TorrentClient.DHT
 {
-    public class DHTTest
+    public class DHT
     {
         public string Ping()
         {
@@ -20,7 +18,7 @@ namespace TorrentClient.DHT
             UdpClient udpClient = new UdpClient();
             try
             {
-                IPEndPoint ep = new IPEndPoint(IPAddress.Parse("67.215.246.10"), 6881);//router.bittorrent.com
+                IPEndPoint ep = new IPEndPoint(IPAddress.Parse(Configuration.DHTStartIP), Configuration.DHTPort);//router.bittorrent.com
                 //IPEndPoint ep = new IPEndPoint(IPAddress.Parse("82.221.103.244"), 6881);//router.utorrent.com
 
                 udpClient.Connect(ep);
@@ -39,7 +37,8 @@ namespace TorrentClient.DHT
                 bDictionary.Add("a", bParams);
 
                 Byte[] byteRequest = bDictionary.EncodeAsBytes();
-                
+
+                //udpClient.Client.ReceiveTimeout = TimeSpan.FromSeconds(2).Seconds;
                 udpClient.Send(byteRequest, byteRequest.Length);
 
                 // Blocks until a message returns on this socket from a remote host.
@@ -50,7 +49,7 @@ namespace TorrentClient.DHT
                 Console.WriteLine("Ping. This is the message you received " + bResponse.ToString());
                 Console.WriteLine("Ping. This message was sent from " + ep.Address.ToString()
                                     + " on their port number " + ep.Port.ToString());
-                
+
                 IBObject responseNode;
                 if (bResponse.TryGetValue("r", out responseNode))
                 {
@@ -70,15 +69,16 @@ namespace TorrentClient.DHT
 
             return nodeId.ToString(Encoding.UTF8);
         }
-
-        public void GetPeers(string info_hash)
+        public BDictionary GetPeers(string info_hash)
         {
-            // This constructor arbitrarily assigns the local port number.
+            BDictionary response = null;
             UdpClient udpClient = new UdpClient();
             try
             {
-                IPEndPoint ep = new IPEndPoint(IPAddress.Parse("67.215.246.10"), 6881);//router.bittorrent.com
-                //IPEndPoint ep = new IPEndPoint(IPAddress.Parse("82.221.103.244"), 6881);//router.utorrent.com
+                //string nodeId = this.Ping();
+                //if (!string.IsNullOrEmpty(nodeId))
+
+                IPEndPoint ep = new IPEndPoint(IPAddress.Parse(Configuration.DHTStartIP), Configuration.DHTPort);//router.bittorrent.com
 
                 udpClient.Connect(ep);
 
@@ -97,11 +97,9 @@ namespace TorrentClient.DHT
                 bDictionary.Add("a", bParams);
 
                 Byte[] byteRequest = bDictionary.EncodeAsBytes();
+                //udpClient.Client.ReceiveTimeout = TimeSpan.FromSeconds(2).Seconds;
 
                 udpClient.Send(byteRequest, byteRequest.Length);
-
-                // Blocks until a message returns on this socket from a remote host.
-                //IPEndPoint RemoteIpEndPoint = new IPEndPoint(IPAddress.Any, 0);
                 Byte[] receivedBytes = udpClient.Receive(ref ep);
 
                 var parser = new BencodeParser();
@@ -111,15 +109,10 @@ namespace TorrentClient.DHT
                 Console.WriteLine("GetPeers. This message was sent from " + ep.Address.ToString()
                                     + " on their port number " + ep.Port.ToString());
 
-                IBObject response;
-                if (bResponse.TryGetValue("r", out response))
+                IBObject responseObject;
+                if (bResponse.TryGetValue("r", out responseObject))
                 {
-                    foreach (var e in (BDictionary)response)
-                    {
-                        Console.WriteLine("     GetPeers response " + e.Key + ", Type: " + e.Value.GetType() + ", value: " + e.Value);
-                    }
-                    
-                    //nodeId = ((BDictionary)responseNode).Get<BString>("id");
+                    return (BDictionary)responseObject;
                 }
             }
             catch (Exception e)
@@ -129,50 +122,8 @@ namespace TorrentClient.DHT
             finally
             {
                 udpClient.Close();
-                Console.Write("Press any key to exit...");
-                Console.ReadKey();
             }
+            return response;
         }
-
-        
-        public void FindNode(string targetId)
-        {
-            // This constructor arbitrarily assigns the local port number.
-            UdpClient udpClient = new UdpClient();
-            try
-            {
-                IPEndPoint ep = new IPEndPoint(IPAddress.Parse("67.215.246.10"), 6881);//router.bittorrent.com
-                //IPEndPoint ep = new IPEndPoint(IPAddress.Parse("82.221.103.244"), 6881);//router.utorrent.com
-
-                udpClient.Connect(ep);
-
-                BDictionary bdictionary = new BDictionary { { "id", "abcdefghij0123456789e1" }, {"target", targetId } };
-                Byte[] byteRequest = bdictionary.EncodeAsBytes();
-
-                udpClient.Send(byteRequest, byteRequest.Length);
-
-                // Blocks until a message returns on this socket from a remote host.
-                Byte[] receivedBytes = udpClient.Receive(ref ep);
-                var parser = new BencodeParser();
-
-                var bstring = parser.Parse<BString>(receivedBytes);
-                string returnData = bstring.ToString();
-                
-                Console.WriteLine("This is the message you received " + returnData.ToString());
-                Console.WriteLine("This message was sent from " + ep.Address.ToString()
-                                    + " on their port number " + ep.Port.ToString());
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-            finally
-            {
-                udpClient.Close();
-                Console.Write("Press any key to exit...");
-                Console.ReadKey();
-            }
-        }
-
     }
 }
