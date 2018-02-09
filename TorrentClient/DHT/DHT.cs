@@ -69,7 +69,7 @@ namespace TorrentClient.DHT
 
             return nodeId.ToString(Encoding.UTF8);
         }
-        public BDictionary GetPeers(string info_hash)
+        public BDictionary GetPeers(string info_hash, string nodeIP, int nodePort)
         {
             BDictionary response = null;
             UdpClient udpClient = new UdpClient();
@@ -77,8 +77,7 @@ namespace TorrentClient.DHT
             {
                 //string nodeId = this.Ping();
                 //if (!string.IsNullOrEmpty(nodeId))
-
-                IPEndPoint ep = new IPEndPoint(IPAddress.Parse(Configuration.DHTStartIP), Configuration.DHTPort);//router.bittorrent.com
+                IPEndPoint ep = new IPEndPoint(IPAddress.Parse(nodeIP), nodePort);//router.bittorrent.com
 
                 udpClient.Connect(ep);
 

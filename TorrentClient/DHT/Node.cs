@@ -10,16 +10,20 @@ namespace TorrentClient.DHT
     public struct Node: IComparable
     {
         public BitArray ID { get; private set; }
+        public BitArray IP { get; set; }
+        public BitArray Port { get; set; }
 
-        public Node(byte [] id)
+        public Node(byte [] id, byte[] ip, byte[] port)
         {
             this.ID = new BitArray(id);
+            this.IP = new BitArray(ip);
+            this.Port = new BitArray(port);
         }
 
-        public Node(string id)
-        {
-            this.ID = new BitArray(Encoding.UTF8.GetBytes(id));
-        }
+        //public Node(string id)
+        //{
+        //    this.ID = new BitArray(Encoding.UTF8.GetBytes(id));
+        //}
 
         public void SetId(BitArray id)
         {
