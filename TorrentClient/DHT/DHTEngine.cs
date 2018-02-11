@@ -3,6 +3,7 @@ using BencodeNET.Objects;
 using BencodeNET.Parsing;
 using System;
 using System.Collections;
+using System.IO;
 using System.Net;
 
 namespace TorrentClient.DHT
@@ -29,24 +30,35 @@ namespace TorrentClient.DHT
                 if (e.Key == "nodes")
                 {
                     byte[] nodesRep = (byte[])((BString)e.Value).Value;
-                    for (int i = 0; i < nodesRep.Length; i = i + 26)
+                    using (var stream = new MemoryStream(nodesRep))
                     {
-                        byte[] nodeInfo = new byte[26];
                         byte[] nodeId = new byte[20];
                         byte[] nodeIP = new byte[4];
                         byte[] nodePort = new byte[2];
 
-                        Array.Copy(nodesRep, i, nodeInfo, 0, 26);
-                        Array.Copy(nodeInfo, nodeId, 20);
-                        Array.Copy(nodesRep, 20, nodeIP, 0, 4);
-                        Array.Copy(nodesRep, 24, nodePort, 0, 2);
+                        var reader = new BinaryReader(stream);
+                        for (int i = 0; i < nodesRep.Length/26; i++)
+                        {
+                            nodeId = reader.ReadBytes(20);
+                            nodeIP = reader.ReadBytes(4);
+                            nodePort = reader.ReadBytes(2);
 
-                        //new IPAddress(nodeId);
-                        //BitConverter.ToInt32(nodePort, 0);
-                        //Array.Reverse(nodePort, 0, nodePort.Length);
-                        Node node = new Node(nodeId, nodeIP, nodePort);
-                        torrent.Nodes.Add(node);
+                            Hash nodeHash = new Hash(nodeId);
+                            Node node = new Node(nodeHash, nodeIP, nodePort);
+                            if (!torrent.Nodes.ContainsKey(nodeHash))
+                            { 
+                                torrent.Nodes.Add(nodeHash, node);
+                            }
+                        }
                     }
+                    //for (int i = 0; i < nodesRep.Length; i = i + 26)
+                    //{
+                    //    //new IPAddress(nodeId);
+                    //    //BitConverter.ToInt32(nodePort, 0);
+                    //    //Array.Reverse(nodePort, 0, nodePort.Length);
+                    //    Node node = new Node(nodeId, nodeIP, nodePort);
+                    //    torrent.Nodes.Add(node);
+                    //}
                 }
                 if (e.Key == "id")
                 {

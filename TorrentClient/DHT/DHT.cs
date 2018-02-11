@@ -69,7 +69,7 @@ namespace TorrentClient.DHT
 
             return nodeId.ToString(Encoding.UTF8);
         }
-        public BDictionary GetPeers(string info_hash, string nodeIP, int nodePort)
+        public BDictionary GetPeers(Hash info_hash, string nodeIP, int nodePort)
         {
             BDictionary response = null;
             UdpClient udpClient = new UdpClient();
@@ -87,7 +87,7 @@ namespace TorrentClient.DHT
 
                 var bParams = new BDictionary();
                 bParams.Add("id", "abcdefghij0123456789");
-                bParams.Add("info_hash", info_hash);
+                bParams.Add("info_hash", info_hash.ToString());
 
                 BDictionary bDictionary = new BDictionary();
                 bDictionary.Add("t", "aa");

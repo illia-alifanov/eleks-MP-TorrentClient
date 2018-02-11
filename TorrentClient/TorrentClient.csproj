@@ -66,10 +66,9 @@
     <Compile Include="ConvertHelper.cs" />
     <Compile Include="DHT\DHT.cs" />
     <Compile Include="DHT\DHTEngine.cs" />
-    <Compile Include="DHT\NodesCollection.cs" />
+    <Compile Include="DHT\Hash.cs" />
     <Compile Include="DHT\DHTTest.cs" />
     <Compile Include="DHT\Node.cs" />
-    <Compile Include="DHT\SortedKeyedCollection.cs" />
     <Compile Include="DHT\Torrent.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
