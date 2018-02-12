@@ -51,14 +51,6 @@ namespace TorrentClient.DHT
                             }
                         }
                     }
-                    //for (int i = 0; i < nodesRep.Length; i = i + 26)
-                    //{
-                    //    //new IPAddress(nodeId);
-                    //    //BitConverter.ToInt32(nodePort, 0);
-                    //    //Array.Reverse(nodePort, 0, nodePort.Length);
-                    //    Node node = new Node(nodeId, nodeIP, nodePort);
-                    //    torrent.Nodes.Add(node);
-                    //}
                 }
                 if (e.Key == "id")
                 {
