@@ -69,7 +69,8 @@
     <Compile Include="DHT\Hash.cs" />
     <Compile Include="DHT\DHTTest.cs" />
     <Compile Include="DHT\Node.cs" />
-    <Compile Include="DHT\Torrent.cs" />
+    <Compile Include="Torrent.cs" />
+    <Compile Include="Peer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

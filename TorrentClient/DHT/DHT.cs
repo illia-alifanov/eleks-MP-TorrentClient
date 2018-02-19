@@ -2,6 +2,8 @@
 using BencodeNET.Objects;
 using BencodeNET.Parsing;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -10,6 +12,13 @@ namespace TorrentClient.DHT
 {
     public class DHT
     {
+        private List<Node> askedNodes;
+
+        public DHT()
+        {
+            askedNodes = new List<Node>();
+        }
+
         public string Ping()
         {
             BString nodeId = "";
@@ -69,7 +78,37 @@ namespace TorrentClient.DHT
 
             return nodeId.ToString(Encoding.UTF8);
         }
-        public BDictionary GetPeers(Hash info_hash, string nodeIP, int nodePort)
+
+        public void FindPeers(Torrent torrent)
+        {
+            Hash hash = torrent.Info_Hash;
+            IPAddress IP = IPAddress.Parse(Configuration.DHTStartIP);
+            int port = Configuration.DHTPort;
+
+            
+            if (torrent.Nodes.Count != 0)
+            {
+                foreach (var node in torrent.Nodes.Values)
+                {
+                    if (!askedNodes.Contains(node))
+                    {
+                        //hash = node.ID;
+                        IP = node.IP;
+                        port = node.Port;
+
+                        askedNodes.Add(node);
+                    }
+                }
+            }
+
+            BDictionary response = GetPeers(hash, IP, port);
+            if (response != null)
+            {
+                ParseGetPeersResponse(response, torrent);
+            }
+        }
+
+        public BDictionary GetPeers(Hash info_hash, IPAddress nodeIP, int nodePort)
         {
             BDictionary response = null;
             UdpClient udpClient = new UdpClient();
@@ -77,7 +116,7 @@ namespace TorrentClient.DHT
             {
                 //string nodeId = this.Ping();
                 //if (!string.IsNullOrEmpty(nodeId))
-                IPEndPoint ep = new IPEndPoint(IPAddress.Parse(nodeIP), nodePort);//router.bittorrent.com
+                IPEndPoint ep = new IPEndPoint(nodeIP, nodePort);//router.bittorrent.com
 
                 udpClient.Connect(ep);
 
@@ -96,7 +135,7 @@ namespace TorrentClient.DHT
                 bDictionary.Add("a", bParams);
 
                 Byte[] byteRequest = bDictionary.EncodeAsBytes();
-                //udpClient.Client.ReceiveTimeout = TimeSpan.FromSeconds(2).Seconds;
+                udpClient.Client.ReceiveTimeout = TimeSpan.FromSeconds(5).Seconds;
 
                 udpClient.Send(byteRequest, byteRequest.Length);
                 Byte[] receivedBytes = udpClient.Receive(ref ep);
@@ -123,6 +162,52 @@ namespace TorrentClient.DHT
                 udpClient.Close();
             }
             return response;
+        }
+
+        private void ParseGetPeersResponse(BDictionary response, Torrent torrent)
+        {
+            foreach (var e in (BDictionary)response)
+            {
+                if (e.Key == "nodes")
+                {
+                    byte[] nodesRep = (byte[])((BString)e.Value).Value;
+                    using (var stream = new MemoryStream(nodesRep))
+                    {
+                        byte[] nodeId = new byte[20];
+                        IPAddress nodeIP;
+                        ushort nodePort;
+
+                        var reader = new BinaryReader(stream);
+                        for (int i = 0; i < nodesRep.Length / 26; i++)
+                        {
+                            nodeId = reader.ReadBytes(20);
+                            nodeIP = new IPAddress(reader.ReadBytes(4));
+                            byte[] portBytes = reader.ReadBytes(2);
+
+                            if (BitConverter.IsLittleEndian)
+                                nodePort = BitConverter.ToUInt16(new byte[2] { (byte)portBytes[1], (byte)portBytes[0] }, 0);
+                            else
+                                nodePort = BitConverter.ToUInt16(new byte[2] { (byte)portBytes[0], (byte)portBytes[1] }, 0);
+
+                            Hash nodeHash = new Hash(nodeId);
+                            Node node = new Node(nodeHash, nodeIP, nodePort);
+                            if (!torrent.Nodes.ContainsKey(nodeHash))
+                            {
+                                torrent.Nodes.Add(nodeHash, node);
+                            }
+                        }
+                    }
+                }
+                if (e.Key == "id")
+                {
+
+                }
+                if (e.Key == "values")
+                {
+                    break;
+                }
+                Console.WriteLine("     GetPeers response " + e.Key + ", Type: " + e.Value.GetType() + ", value: " + e.Value);
+            }
         }
     }
 }
