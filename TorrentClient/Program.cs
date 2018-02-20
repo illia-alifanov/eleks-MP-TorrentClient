@@ -20,6 +20,9 @@ namespace TorrentClient
             {
                 Console.WriteLine(string.Format("Node id:{0} ", i.Key));
             }
+
+            Console.WriteLine("Press any key...");
+            Console.ReadKey();
         }
     }
 }
