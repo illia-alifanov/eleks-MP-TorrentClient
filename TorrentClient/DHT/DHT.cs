@@ -92,11 +92,11 @@ namespace TorrentClient.DHT
                 {
                     if (!askedNodes.Contains(node))
                     {
-                        //hash = node.ID;
                         IP = node.IP;
                         port = node.Port;
 
                         askedNodes.Add(node);
+                        break;
                     }
                 }
             }
@@ -114,15 +114,9 @@ namespace TorrentClient.DHT
             UdpClient udpClient = new UdpClient();
             try
             {
-                //string nodeId = this.Ping();
-                //if (!string.IsNullOrEmpty(nodeId))
                 IPEndPoint ep = new IPEndPoint(nodeIP, nodePort);//router.bittorrent.com
 
                 udpClient.Connect(ep);
-
-                // Sends a message to the host to which you have connected.
-                string bencoded = "d1:ad2:id20:abcdefghij0123456789e1:q4:ping1:t2:aa1:y1:qe";
-                Byte[] sendBytes = Encoding.UTF8.GetBytes(bencoded);
 
                 var bParams = new BDictionary();
                 bParams.Add("id", "abcdefghij0123456789");
