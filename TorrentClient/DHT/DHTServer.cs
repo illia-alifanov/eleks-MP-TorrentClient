@@ -17,6 +17,7 @@ namespace TorrentClient.DHT
         public DHTServer(IDictionary<DHTBusKey, byte[]> dhtBus,  CancellationToken cancellationToken) : base()
         {
             _cancellationToken = cancellationToken;
+            _dhtBus = dhtBus;
         }
 
         public void Listen()
