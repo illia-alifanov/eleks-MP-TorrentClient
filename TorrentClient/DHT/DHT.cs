@@ -13,10 +13,12 @@ namespace TorrentClient.DHT
     public class DHT
     {
         private List<Node> askedNodes;
+        private DHTClient _dhtClient;
 
         public DHT()
         {
             askedNodes = new List<Node>();
+            _dhtClient = new DHTClient();
         }
 
         public string Ping()
@@ -24,13 +26,13 @@ namespace TorrentClient.DHT
             BString nodeId = "";
 
             // This constructor arbitrarily assigns the local port number.
-            UdpClient udpClient = new UdpClient();
+            //UdpClient udpClient = new UdpClient();
             try
             {
                 IPEndPoint ep = new IPEndPoint(IPAddress.Parse(Configuration.DHTStartIP), Configuration.DHTPort);//router.bittorrent.com
                 //IPEndPoint ep = new IPEndPoint(IPAddress.Parse("82.221.103.244"), 6881);//router.utorrent.com
 
-                udpClient.Connect(ep);
+                _dhtClient.Connect(ep);
 
                 // Sends a message to the host to which you have connected.
                 string bencoded = "d1:ad2:id20:abcdefghij0123456789e1:q4:ping1:t2:aa1:y1:qe";
@@ -48,10 +50,10 @@ namespace TorrentClient.DHT
                 Byte[] byteRequest = bDictionary.EncodeAsBytes();
 
                 //udpClient.Client.ReceiveTimeout = TimeSpan.FromSeconds(2).Seconds;
-                udpClient.Send(byteRequest, byteRequest.Length);
+                _dhtClient.Send(byteRequest, byteRequest.Length);
 
                 // Blocks until a message returns on this socket from a remote host.
-                Byte[] receivedBytes = udpClient.Receive(ref ep);
+                Byte[] receivedBytes = _dhtClient.Receive(ref ep);
                 var parser = new BencodeParser();
                 var bResponse = parser.Parse<BDictionary>(receivedBytes);
 
@@ -71,7 +73,7 @@ namespace TorrentClient.DHT
             }
             finally
             {
-                udpClient.Close();
+                _dhtClient.Close();
                 //Console.Write("Press any key to exit...");
                 //Console.ReadKey();
             }
@@ -82,9 +84,8 @@ namespace TorrentClient.DHT
         public void FindPeers(Torrent torrent)
         {
             Hash hash = torrent.Info_Hash;
-            IPAddress IP = IPAddress.Parse(Configuration.DHTStartIP);
+            IPAddress IP = IPAddress.Parse(Configuration.DHTStartIP_2);
             int port = Configuration.DHTPort;
-
             
             if (torrent.Nodes.Count != 0)
             {
@@ -92,11 +93,11 @@ namespace TorrentClient.DHT
                 {
                     if (!askedNodes.Contains(node))
                     {
-                        //hash = node.ID;
                         IP = node.IP;
                         port = node.Port;
 
                         askedNodes.Add(node);
+                        break;
                     }
                 }
             }
@@ -111,18 +112,12 @@ namespace TorrentClient.DHT
         public BDictionary GetPeers(Hash info_hash, IPAddress nodeIP, int nodePort)
         {
             BDictionary response = null;
-            UdpClient udpClient = new UdpClient();
+            //UdpClient udpClient = new UdpClient();
             try
             {
-                //string nodeId = this.Ping();
-                //if (!string.IsNullOrEmpty(nodeId))
                 IPEndPoint ep = new IPEndPoint(nodeIP, nodePort);//router.bittorrent.com
 
-                udpClient.Connect(ep);
-
-                // Sends a message to the host to which you have connected.
-                string bencoded = "d1:ad2:id20:abcdefghij0123456789e1:q4:ping1:t2:aa1:y1:qe";
-                Byte[] sendBytes = Encoding.UTF8.GetBytes(bencoded);
+                _dhtClient.Connect(ep);
 
                 var bParams = new BDictionary();
                 bParams.Add("id", "abcdefghij0123456789");
@@ -135,10 +130,13 @@ namespace TorrentClient.DHT
                 bDictionary.Add("a", bParams);
 
                 Byte[] byteRequest = bDictionary.EncodeAsBytes();
-                udpClient.Client.ReceiveTimeout = TimeSpan.FromSeconds(5).Seconds;
+                
 
-                udpClient.Send(byteRequest, byteRequest.Length);
-                Byte[] receivedBytes = udpClient.Receive(ref ep);
+                _dhtClient.Send(byteRequest, byteRequest.Length);
+
+                IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
+                //byte[] data = _connection.Receive(ref sender);
+                Byte[] receivedBytes = _dhtClient.Receive(ref sender);
 
                 var parser = new BencodeParser();
                 var bResponse = parser.Parse<BDictionary>(receivedBytes);
@@ -157,10 +155,10 @@ namespace TorrentClient.DHT
             {
                 Console.WriteLine(e.ToString());
             }
-            finally
-            {
-                udpClient.Close();
-            }
+            //finally
+            //{
+            //    _dhtClient.Close();
+            //}
             return response;
         }
 
@@ -204,7 +202,13 @@ namespace TorrentClient.DHT
                 }
                 if (e.Key == "values")
                 {
-                    break;
+                    //break;
+                    var list = ((BList)e.Value).Value;
+                    foreach (var element in list)
+                    {
+
+                    }
+
                 }
                 Console.WriteLine("     GetPeers response " + e.Key + ", Type: " + e.Value.GetType() + ", value: " + e.Value);
             }

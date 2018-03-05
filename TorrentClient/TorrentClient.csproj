@@ -65,6 +65,7 @@
     <Compile Include="Configuration.cs" />
     <Compile Include="ConvertHelper.cs" />
     <Compile Include="DHT\DHT.cs" />
+    <Compile Include="DHT\DHTClient.cs" />
     <Compile Include="DHT\DHTEngine.cs" />
     <Compile Include="DHT\Hash.cs" />
     <Compile Include="DHT\DHTTest.cs" />
