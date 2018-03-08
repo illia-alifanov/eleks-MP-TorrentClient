@@ -30,6 +30,7 @@ namespace TorrentClient.DHT
 
             BitArray thisID = new BitArray(this.Value);
             BitArray otherID = new BitArray(otherObj.Value);
+            //BitArray distance = thisID.Xor(otherID);
 
             // implementation for Big-endian (network byte order) from biggest bytes to smaller
             // instead of XOR we can find first difference between two hashes (bit arrays with 20bytes)
