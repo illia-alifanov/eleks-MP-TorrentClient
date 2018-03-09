@@ -4,7 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Text;
 
 namespace TorrentClient.DHT
 {
@@ -28,39 +27,47 @@ namespace TorrentClient.DHT
             DHT dht = new DHT();
             while (Peers.Count == 0)
             {
-                Hash hash = _torrent.Info_Hash;
-                IPAddress IP = IPAddress.Parse(Configuration.DHTStartIP);
-                int port = Configuration.DHTPort;
+                Node nodeToAsk = GetNextNode();
 
-                if (Nodes.Count != 0)
-                {
-                    foreach (var node in Nodes.Values)
-                    {
-                        if (!askedNodes.Contains(node))
-                        {
-                            IP = node.IP;
-                            port = node.Port;
-
-                            askedNodes.Add(node);
-
-                            BitArray torrentID = new BitArray(_torrent.Info_Hash.Value);
-
-                            BitArray nodeID = new BitArray(node.ID.Value);
-                            BitArray distance = nodeID.Xor(torrentID);
-                            Console.WriteLine("distance: " + BitArrayToBitString(distance));
-
-
-                            break;
-                        }
-                    }
-                }
-
-                BDictionary response = dht.GetPeers(_torrent, IP, port);
+                BDictionary response = dht.GetPeers(_torrent, nodeToAsk.IP, nodeToAsk.Port);
                 if (response != null)
                 {
                     ParseGetPeersResponse(response, _torrent);
                 }
             }
+        }
+
+        private Node GetNextNode()
+        {
+            Node nextNode = new Node();
+
+            if (Nodes.Count == 0)
+            {
+                nextNode.ID = _torrent.Info_Hash;
+                nextNode.IP = IPAddress.Parse(Configuration.DHTStartIP);
+                nextNode.Port = Configuration.DHTPort;
+            }
+            else
+            {
+                foreach (var node in Nodes.Values)
+                {
+                    if (!askedNodes.Contains(node))
+                    {
+                        nextNode = node;
+                        askedNodes.Add(nextNode);
+
+                        BitArray torrentID = new BitArray(_torrent.Info_Hash.Value);
+
+                        BitArray nodeID = new BitArray(node.ID.Value);
+                        BitArray distance = nodeID.Xor(torrentID);
+                        Console.WriteLine("distance: " + ConvertHelper.BitArrayToBitString(distance));
+
+                        break;
+                    }
+                }
+            }
+
+            return nextNode;
         }
 
         private void ParseGetPeersResponse(BDictionary response, Torrent torrent)
@@ -103,28 +110,17 @@ namespace TorrentClient.DHT
                 }
                 if (e.Key == "values")
                 {
-                    //break;
                     var list = ((BList)e.Value).Value;
                     foreach (var element in list)
                     {
                     }
 
+                    // just for stop runing
+                    Peers.Add(new Peer(new byte[1], new byte[1]));
+                    break;
                 }
-                //Console.WriteLine("     GetPeers response " + e.Key + ", Type: " + e.Value.GetType() + ", value: " + e.Value);
             }
         }
-
-        public static string BitArrayToBitString(BitArray bits)
-        {
-            var sb = new StringBuilder();
-
-            for (int i = 0; i < bits.Count; i++)
-            {
-                char c = bits[i] ? '1' : '0';
-                sb.Append(c);
-            }
-
-            return sb.ToString();
-        }
+       
     }
 }

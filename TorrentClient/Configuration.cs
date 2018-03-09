@@ -8,6 +8,6 @@ namespace TorrentClient
 
         public static string DHTStartIP_2 => ConfigurationManager.AppSettings["DHTStartIP_2"];
 
-        public static int DHTPort = 6881;
+        public static ushort DHTPort = 6881;
     }
 }

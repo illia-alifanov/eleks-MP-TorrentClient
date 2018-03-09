@@ -12,11 +12,9 @@ namespace TorrentClient
         static void Main(string[] args)
         {
             string torrent_info = "E58A5149F542B1090315345D7231B8503B46ECB1";
-            SHA1Managed sha1 = new SHA1Managed();
 
             var torrent = new Torrent()
             {
-                Info_Hash = new Hash(sha1.ComputeHash(Encoding.UTF8.GetBytes(torrent_info))),
                 Info = torrent_info
             };
 
