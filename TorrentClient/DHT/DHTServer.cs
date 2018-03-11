@@ -12,9 +12,9 @@ namespace TorrentClient.DHT
     public class DHTServer : UdpClient
     {
         private CancellationToken _cancellationToken;
-        private IDictionary<DHTBusKey, byte[]> _dhtBus;
+        private IDictionary<NetHost, byte[]> _dhtBus;
 
-        public DHTServer(IDictionary<DHTBusKey, byte[]> dhtBus,  CancellationToken cancellationToken) : base()
+        public DHTServer(IDictionary<NetHost, byte[]> dhtBus,  CancellationToken cancellationToken) : base(1234)
         {
             _cancellationToken = cancellationToken;
             _dhtBus = dhtBus;
@@ -26,7 +26,7 @@ namespace TorrentClient.DHT
                 IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
                 
                 var data = this.Receive(ref sender);
-                var key = new DHTBusKey(sender.Address, sender.Port);
+                var key = new NetHost(sender.Address, (ushort)sender.Port);
                 _dhtBus.Add(key, data);
             }
         }

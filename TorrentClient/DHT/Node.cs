@@ -8,29 +8,15 @@ using System.Threading.Tasks;
 
 namespace TorrentClient.DHT
 {
-    public struct Node: IComparable
+    public struct Node
     {
         public Hash ID { get; set; }
-        public IPAddress IP { get; set; }
-        public ushort Port { get; set; }
+        public NetHost Host { get; set; }
 
-        public Node(Hash id, IPAddress ip, ushort port)
+        public Node(Hash id, NetHost host)
         {
             this.ID = id;
-            this.IP = ip;
-            this.Port = port;
+            this.Host = host;
         }
-
-        //public Node(string id)
-        //{
-        //    this.ID = new BitArray(Encoding.UTF8.GetBytes(id));
-        //}
-
-        public int CompareTo(object obj)
-        {
-            return ID.CompareTo(obj);
-        }
-
-        
     }
 }

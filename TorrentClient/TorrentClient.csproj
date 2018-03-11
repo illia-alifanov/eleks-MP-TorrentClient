@@ -65,7 +65,6 @@
     <Compile Include="Configuration.cs" />
     <Compile Include="ConvertHelper.cs" />
     <Compile Include="DHT\DHT.cs" />
-    <Compile Include="DHT\DHTBusKey.cs" />
     <Compile Include="DHT\DHTClient.cs" />
     <Compile Include="DHT\DHTEngine.cs" />
     <Compile Include="DHT\DHTServer.cs" />
@@ -73,6 +72,7 @@
     <Compile Include="DHT\DHTTest.cs" />
     <Compile Include="DHT\Node.cs" />
     <Compile Include="DHT\TorrentToNodeComparer.cs" />
+    <Compile Include="NetHost.cs" />
     <Compile Include="Torrent.cs" />
     <Compile Include="Peer.cs" />
     <Compile Include="Program.cs" />

@@ -5,14 +5,14 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TorrentClient.DHT
+namespace TorrentClient
 {
-    public class DHTBusKey
+    public struct NetHost
     {
         public IPAddress IP { get; set; }
-        public int Port { get; set; }
+        public ushort Port { get; set; }
 
-        public DHTBusKey(IPAddress ip, int port)
+        public NetHost(IPAddress ip, ushort port)
         {
             IP = ip;
             Port = port;

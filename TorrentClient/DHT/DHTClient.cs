@@ -9,7 +9,7 @@ namespace TorrentClient.DHT
 {
     public class DHTClient : UdpClient
     {
-        public DHTClient() : base(1234)
+        public DHTClient() : base()
         {
             base.Client.ReceiveTimeout = TimeSpan.FromSeconds(5).Seconds;
         }

@@ -12,8 +12,14 @@ namespace TorrentClient
 
         public Torrent()
         {
+        }
+
+        public Torrent(string info)
+        {
+            Info = info;
             Info_Hash = new Hash(GetInfoHash());
         }
+
 
         private byte[] GetInfoHash()
         {

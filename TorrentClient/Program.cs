@@ -11,19 +11,18 @@ namespace TorrentClient
     {
         static void Main(string[] args)
         {
-            string torrent_info = "E58A5149F542B1090315345D7231B8503B46ECB1";
-
-            var torrent = new Torrent()
-            {
-                Info = torrent_info
-            };
+            //string torrent_info = "E58A5149F542B1090315345D7231B8503B46ECB1";
+            string torrent_info = "51B0E1CC4E91C7B08D533EEDA417AE6F56101908";
+            
+            var torrent = new Torrent(torrent_info);
 
             var dhtEngine = new DHTEngine(torrent);
             dhtEngine.FindPeers();
+            //dhtEngine.FindPeersWithServer();
 
             foreach (var i in dhtEngine.Peers)
             {
-                Console.WriteLine(string.Format("Peer IP:{0} ", i.IP));
+                Console.WriteLine(string.Format("Peer: {0}:{1} ", i.Host.IP, i.Host.Port));
             }
 
             Console.WriteLine("Press any key...");

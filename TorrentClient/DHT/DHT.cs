@@ -1,6 +1,7 @@
 ﻿using BencodeNET.Objects;
 using BencodeNET.Parsing;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Text;
 
@@ -75,18 +76,14 @@ namespace TorrentClient.DHT
             return nodeId.ToString(Encoding.UTF8);
         }
 
-        public BDictionary GetPeers(Torrent torrent, IPAddress nodeIP, int nodePort)
+        public BDictionary GetPeers(Torrent torrent, NetHost nodeHost, Dictionary<NetHost, byte[]> dhtResponses)
         {
             BDictionary response = null;
             try
             {
-                IPEndPoint ep = new IPEndPoint(nodeIP, nodePort);//router.bittorrent.com
-
-                _dhtClient.Connect(ep);
-
                 var bParams = new BDictionary();
                 bParams.Add("id", "abcdefghij0123456789");
-                bParams.Add("info_hash", new BString(torrent.Info));
+                bParams.Add("info_hash", new BString(torrent.Info_Hash.Value));
 
                 BDictionary bDictionary = new BDictionary();
                 bDictionary.Add("t", "aa");
@@ -95,25 +92,26 @@ namespace TorrentClient.DHT
                 bDictionary.Add("a", bParams);
 
                 Byte[] byteRequest = bDictionary.EncodeAsBytes();
-                
 
-                _dhtClient.Send(byteRequest, byteRequest.Length);
-
+                IPEndPoint ep = new IPEndPoint(nodeHost.IP, nodeHost.Port);//router.bittorrent.com
                 IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
+
+                _dhtClient.Connect(ep);
+                _dhtClient.Send(byteRequest, byteRequest.Length);
+                
                 Byte[] receivedBytes = _dhtClient.Receive(ref sender);
 
-                if (sender.Equals(ep))
-                {
-                    var parser = new BencodeParser();
-                    var bResponse = parser.Parse<BDictionary>(receivedBytes);
+                var parser = new BencodeParser();
+                var bResponse = parser.Parse<BDictionary>(receivedBytes);
 
-                    IBObject responseObject;
-                    if (bResponse.TryGetValue("r", out responseObject))
-                    {
-                        return (BDictionary)responseObject;
-                    }
+                IBObject responseObject;
+                if (bResponse.TryGetValue("r", out responseObject))
+                {
+                    response = (BDictionary)responseObject;
+                    dhtResponses.Add(new NetHost(sender.Address, (ushort)sender.Port), receivedBytes);
+                    return response;
                 }
-                
+
             }
             catch (Exception e)
             {
@@ -121,5 +119,36 @@ namespace TorrentClient.DHT
             }
             return response;
         }
+
+
+        public void Send_GetPeers(Torrent torrent, NetHost nodeHost, Dictionary<NetHost, byte[]> answeredHosts)
+        {
+            try
+            {
+                IPEndPoint ep = new IPEndPoint(nodeHost.IP, nodeHost.Port);//router.bittorrent.com
+
+                _dhtClient.Connect(ep);
+
+                var bParams = new BDictionary();
+                bParams.Add("id", "abcdefghij0123456789");
+                bParams.Add("info_hash", new BString(torrent.Info_Hash.Value));
+
+                BDictionary bDictionary = new BDictionary();
+                bDictionary.Add("t", "aa");
+                bDictionary.Add("y", "q");
+                bDictionary.Add("q", "get_peers");
+                bDictionary.Add("a", bParams);
+
+                Byte[] byteRequest = bDictionary.EncodeAsBytes();
+
+                _dhtClient.Send(byteRequest, byteRequest.Length);
+
+            }
+            catch (Exception e)
+            {
+                //Console.WriteLine(e.ToString());
+            }
+        }
+
     }
 }
