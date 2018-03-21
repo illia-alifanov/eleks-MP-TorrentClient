@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using TorrentClient.DataStore;
 using TorrentClient.DHT;
 
 namespace TorrentClient
@@ -24,6 +25,9 @@ namespace TorrentClient
             {
                 Console.WriteLine(string.Format("Peer: {0}:{1} ", i.Host.IP, i.Host.Port));
             }
+
+            ITorrentStore store = new XMLTorrentStore(torrent_info, dhtEngine.Peers);
+            store.SavePeers();
 
             Console.WriteLine("Press any key...");
             Console.ReadKey();

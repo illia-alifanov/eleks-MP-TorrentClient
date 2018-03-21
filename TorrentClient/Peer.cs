@@ -11,6 +11,9 @@ namespace TorrentClient
     {
         public NetHost Host { get; set; }
 
+        public Peer()
+        {
+        }
         public Peer(NetHost host)
         {
             this.Host = host;
