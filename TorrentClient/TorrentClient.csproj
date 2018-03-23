@@ -65,9 +65,8 @@
     <Compile Include="Configuration.cs" />
     <Compile Include="ConvertHelper.cs" />
     <Compile Include="DataStore\ITorrentStore.cs" />
-    <Compile Include="DataStore\XMLReader.cs" />
+    <Compile Include="DataStore\StoreAttributes.cs" />
     <Compile Include="DataStore\XMLTorrentStore.cs" />
-    <Compile Include="DataStore\XMLWriter.cs" />
     <Compile Include="DHT\DHT.cs" />
     <Compile Include="DHT\DHTClient.cs" />
     <Compile Include="DHT\DHTEngine.cs" />

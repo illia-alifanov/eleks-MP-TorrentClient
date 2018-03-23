@@ -26,11 +26,16 @@ namespace TorrentClient
                 Console.WriteLine(string.Format("Peer: {0}:{1} ", i.Host.IP, i.Host.Port));
             }
 
-            ITorrentStore store = new XMLTorrentStore(torrent_info, dhtEngine.Peers);
-            store.SavePeers();
+            SavePeers(torrent_info, dhtEngine.Peers);
 
             Console.WriteLine("Press any key...");
             Console.ReadKey();
+        }
+
+        static void SavePeers(string torrent_info, HashSet<Peer> peers)
+        {
+            ITorrentStore store = new XMLTorrentStore(torrent_info, peers);
+            store.SavePeers();
         }
     }
 }
