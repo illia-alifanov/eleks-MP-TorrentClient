@@ -80,7 +80,7 @@ namespace TorrentClient.DHT
         {
 
             DHT dht = new DHT();
-            while (Peers.Count < 5)
+            while (Peers.Count < 10)
             {
                 Node nodeToAsk = GetNextNode();
 

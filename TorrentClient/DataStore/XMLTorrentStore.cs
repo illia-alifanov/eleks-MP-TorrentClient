@@ -26,6 +26,7 @@ namespace TorrentClient.DataStore
             XmlAttribute idAttribute = document.CreateAttribute(StoreAttributes.ID_ATTRIBUTE);
             idAttribute.Value = _torrentId;
             torrentNode.Attributes.Append(idAttribute);
+            document.AppendChild(torrentNode);
 
             foreach (var peer in _peers)
             {
@@ -35,7 +36,7 @@ namespace TorrentClient.DataStore
                 peerIP.Value = peer.Host.IP.ToString();
 
                 XmlAttribute peerPort = document.CreateAttribute(StoreAttributes.PORT_ATTRIBUTE);
-                peerIP.Value = peer.Host.Port.ToString();
+                peerPort.Value = peer.Host.Port.ToString();
 
                 peerNode.Attributes.Append(peerIP);
                 peerNode.Attributes.Append(peerPort);
